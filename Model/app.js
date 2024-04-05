@@ -18,7 +18,14 @@ db.connect((err) => {
     if(err) {
         throw err;
     }
+    db.query("SELECT * FROM tester", function (err, res, fields) {
+        if (err) {
+            throw err;
+        }
+        console.log(res);
+    })
     console.log('Connection done');
+    db.end();
 })
 
 // create DB
@@ -31,6 +38,7 @@ app.get('/createdb', (req, res) => {
         console.log('result');
         res.send("database created");
     })
+
 })
 
 app.get('/', (req, res) => {
