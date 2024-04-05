@@ -1,7 +1,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const port = 3000;
-const databaseName = 'TESTSQLDATABASE'; //'dbSQL'
+const databaseName = 'patientdatabase'; //'TESTSQLDATABASE'; //'dbSQL'
 
 const app = express();
 
@@ -18,7 +18,7 @@ db.connect((err) => {
     if(err) {
         throw err;
     }
-    db.query("SELECT * FROM tester", function (err, res, fields) {
+    db.query("SELECT * FROM patients", function (err, res, fields) {
         if (err) {
             throw err;
         }
