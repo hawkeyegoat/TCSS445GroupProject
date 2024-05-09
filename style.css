@@ -1,0 +1,38 @@
+.login-box {
+    background-color: grey;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    min-height: 150px;
+}
+
+.login-box button {
+    margin-top: 10px;  /* Spacing between buttons */
+    margin-bottom: 10px; /* Additional spacing below each button */
+    width: 80%; /* Makes buttons wider */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Adds a subtle shadow for depth */
+    border: none; /* Optional: removes default border */
+}
+
+/* Adding some hover effects for better user interaction */
+.login-box button:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+/* Active state to show the button is being clicked */
+.login-box button:active {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    transform: translateY(1px);
+}
+
+.admin-contact-info {
+    color: #ffffff96;  /* Example: Change this color code to whatever you prefer */
+}
