@@ -1,7 +1,5 @@
 -- Script: PatientDatabase
 -- A database for group 5 project for 445
-
--- Set the date format
 SET SESSION sql_mode = 'STRICT_ALL_TABLES';
 
 -- PATIENTS table
@@ -89,9 +87,6 @@ INSERT INTO admin_signin (admin_Username, admin_Password) VALUES
 ('Logan', 'Atkinson'),
 ('David', 'Hohn'),
 ('Gabriel', 'Stupart');
-
--- Sequence is not required in MySQL, as AUTO_INCREMENT can be used instead
--- CREATE SEQUENCE dataID_seq START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE;
 
 -- MONITORINGDATA table
 CREATE TABLE MonitoringData (
