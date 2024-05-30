@@ -15,12 +15,32 @@ function transformBox(type, action) {
                     <button type="submit" class="btn btn-primary">Sign Up</button>
                 </form>`;
         } else { // Login
-            formHtml = `
-                <form class="form-inner">
-                    <input type="email" class="form-control mb-2" placeholder="Email">
-                    <input type="password" class="form-control mb-2" placeholder="Password">
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </form>`;
+            // formHtml = `
+            //     <form class="form-inner">
+            //         <input type="email" class="form-control mb-2" placeholder="Email">
+            //         <input type="password" class="form-control mb-2" placeholder="Password">
+            //         <button type="submit" class="btn btn-primary">Login</button>
+            //     </form>`;
+                let form = document.createElement("form");
+                form.action = "login.php";
+                form.method = "POST";
+                form.id = "loginForm";
+                let email = document.createElement("input");
+                email.type = "email";
+                email.className = "form-control mb-2";
+                email.placeholder = "Email";
+                let password = document.createElement("input");
+                password.type = "password";
+                password.className = "form-control mb-2";
+                password.placeholder = "Password";
+                let login = document.createElement("button");
+                login.type = "submit";
+                login.class = "btn btn-primary";
+                login.textContent = "Login";
+                form.appendChild(email);
+                form.appendChild(password);
+                form.appendChild(login);
+                element.append(form);
         }
     } else if (type === 'doctor') {
         formHtml = `
@@ -33,7 +53,7 @@ function transformBox(type, action) {
         `;
     }
 
-    element.innerHTML += formHtml + backButtonHtml; // Add the form and back button to the box
+    element.innerHTML += backButtonHtml; // Add the form and back button to the box
 }
 
 function resetBox(type) {
