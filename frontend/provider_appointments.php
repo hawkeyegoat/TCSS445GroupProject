@@ -172,13 +172,10 @@
                         $sql = "INSERT INTO Appointments (patientID, providerID, appointmentDateTime, appointmentType, notes)
                                 VALUES ('$patientId', '$providerId', '$appointmentDateTime', '$appointmentType', '$notes')";
                         echo '<script>alert('.$sql.')</script>';
-                        if ($result = mysqli_query($connection, $sql))
-                        {
-                            if(mysqli_affected_rows($connection) > 0) {
-                                echo "<div> Success! </div>";
-                            } else {
-                                echo "<div> Failure! </div>";
-                            }
+                        try {
+                            $result = mysqli_query($connection, $sql);
+                        } catch (Exception $e) {
+                            echo "<div> Query Failure! </div>";
                         }
                     }
                 }
