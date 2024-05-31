@@ -1,3 +1,4 @@
+<?php require_once('config.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,18 +48,44 @@
                                     {
                                         die( mysqli_connect_error() );
                                     }
-                    if (isset($_GET['signupExpand'])) {
+                    if (isset($_GET['signUpExpand'])) {
                         // Do something to give entry fields
+                        echo '
+                        <div class="col-sm-4 col-lg-4 login-box" id="signupForm">
+                            <form class="form-inner" method="GET" action="index.php">
+                                <input type="email" class="form-control mb-2" placeholder="Email">
+                                <input type="password" class="form-control mb-2" placeholder="Password">
+                                <textarea class="form-control mb-2" placeholder="Symptoms"></textarea>
+                                <button type="submit" class="btn btn-primary" name="patientSignup">Sign Up</button>
+                            </form>
+                        </div>
+                        ';
                     } else if (isset($_GET['loginExpand'])) {
                         // Do something to give entry fields
+                        echo '
+                        <div class="col-sm-4 col-lg-4 login-box" id="loginForm">
+                            <form class="form-inner" method="GET" action="index.php">
+                                <input type="email" class="form-control mb-2" placeholder="Email">
+                                <input type="password" class="form-control mb-2" placeholder="Password">
+                                <button type="submit" class="btn btn-primary" name="patientLogin">Login</button>
+                            </form>
+                        </div>
+                        ';
                     } else if (isset($_GET['providerLoginExpand'])) {
                         // Do something to give entry fields
                         echo '
-                            <form method="GET" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                        '
+                        <div class="col-sm-4 col-lg-4 login-box" id="doctorForm">
+                            <form class="form-inner" method="GET" action="index.php">
+                                <input type="email" class="form-control mb-2" placeholder="Email">
+                                <input type="password" class="form-control mb-2" placeholder="Password">
+                                <button type="submit" class="btn btn-primary" name="providerLogin">Login</button>
+                            </form>
+                            <p class="admin-info" style="font-size: 0.8rem;">If you do not have a login, please contact your hospital admin.</p>
+                        </div>
+                        ';
                     }
                 }
-        </div>
+            ?>
     </div>
 </body>
 </html>
