@@ -102,8 +102,8 @@
                 <form method="GET" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                     <label for="patientID">Patient ID:</label><br>
                     <?php
-                        $pID = $_SESSION["patientID"];
                         if ($_SESSION["isAdmin"] == "false") {
+                            $pID = $_SESSION["patientID"];
                             echo '<input type="text" id="patientID" name="patientID" value="' . $pID . '" required readonly><br><br>';
                         } else {
                             echo '<input type="text" id="patientID" name="patientID" required><br><br>';
