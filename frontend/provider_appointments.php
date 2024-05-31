@@ -83,54 +83,106 @@
                 </form>
                 <div id="appointmentsResult" class="mt-3">
                     <?php
-                    if (isset($_GET['providerId'])) {
-                        $providerId = $_GET['providerId'];
-                        $sql = "SELECT h.FirstName, h.LastName, a.AppointmentDateTime, a.AppointmentType, p.First_name, p.Last_name 
-                                FROM HealthcareProviders h
-                                JOIN Appointments a ON h.ProviderID = a.ProviderID
-                                JOIN patients p ON a.PatientID = p.PatientID
-                                WHERE h.ProviderID = '$providerId'";
-                        if ($result = $connection->query($sql)) {
-                            if ($result->num_rows == 0) {
-                                echo '<p class="text-center">No appointments found.</p>';
-                            } else {
-                                echo "<div class='table-responsive'>
-                                        <table class='table table-hover'>
-                                            <thead>
-                                                <tr class='table-success'>
-                                                    <th scope='col'>First Name</th>
-                                                    <th scope='col'>Last Name</th>
-                                                    <th scope='col'>Date</th>
-                                                    <th scope='col'>Time</th>
-                                                    <th scope='col'>Type</th>
-                                                    <th scope='col'>Patient</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>";
-                                while ($row = $result->fetch_assoc()) {
-                                    $appointmentDate = date("Y-m-d", strtotime($row['AppointmentDateTime']));
-                                    $appointmentTime = date("H:i:s", strtotime($row['AppointmentDateTime']));
-                                    ?>
-                                    <tr>
-                                        <td><?php echo $row['FirstName']; ?></td>
-                                        <td><?php echo $row['LastName']; ?></td>
-                                        <td><?php echo $appointmentDate; ?></td>
-                                        <td><?php echo $appointmentTime; ?></td>
-                                        <td><?php echo $row['AppointmentType']; ?></td>
-                                        <td><?php echo $row['First_name'] . ' ' . $row['Last_name']; ?></td>
-                                    </tr>
-                                    <?php
+                    if ($_SERVER["REQUEST_METHOD"] == "GET")
+                    {
+                        if (isset($_GET['providerId'])) {
+                            $providerId = $_GET['providerId'];
+                            $sql = "SELECT h.FirstName, h.LastName, a.AppointmentDateTime, a.AppointmentType, p.First_name, p.Last_name 
+                                    FROM HealthcareProviders h
+                                    JOIN Appointments a ON h.ProviderID = a.ProviderID
+                                    JOIN patients p ON a.PatientID = p.PatientID
+                                    WHERE h.ProviderID = '$providerId'";
+                            if ($result = $connection->query($sql)) {
+                                if ($result->num_rows == 0) {
+                                    echo '<p class="text-center">No appointments found.</p>';
+                                } else {
+                                    echo "<div class='table-responsive'>
+                                            <table class='table table-hover'>
+                                                <thead>
+                                                    <tr class='table-success'>
+                                                        <th scope='col'>First Name</th>
+                                                        <th scope='col'>Last Name</th>
+                                                        <th scope='col'>Date</th>
+                                                        <th scope='col'>Time</th>
+                                                        <th scope='col'>Type</th>
+                                                        <th scope='col'>Patient</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>";
+                                    while ($row = $result->fetch_assoc()) {
+                                        $appointmentDate = date("Y-m-d", strtotime($row['AppointmentDateTime']));
+                                        $appointmentTime = date("H:i:s", strtotime($row['AppointmentDateTime']));
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $row['FirstName']; ?></td>
+                                            <td><?php echo $row['LastName']; ?></td>
+                                            <td><?php echo $appointmentDate; ?></td>
+                                            <td><?php echo $appointmentTime; ?></td>
+                                            <td><?php echo $row['AppointmentType']; ?></td>
+                                            <td><?php echo $row['First_name'] . ' ' . $row['Last_name']; ?></td>
+                                        </tr>
+                                        <?php
+                                    }
+                                    echo '</tbody>';
+                                    echo '</table>';
+                                    echo '</div>';
                                 }
-                                echo '</tbody>';
-                                echo '</table>';
-                                echo '</div>';
+                                $result->free();
                             }
-                            $result->free();
                         }
+                        $connection->close();
                     }
-                    $connection->close();
                     ?>
                 </div>
+            </div>
+            <div class="col-sm-6 col-lg-5 login-box" id="createAppointmentsBox">
+                <p class="text-center">Create appointment</p>
+                <form method="GET" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                    <label for="patientID">Patient ID:</label><br>
+                    <input type="text" id="patientID" name="patientID" required><br><br>
+
+                    <label for="providerID">Provider ID:</label><br>
+                    <input type="text" id="providerID" name="providerID" required><br><br>
+
+                    <label for="appointmentDateTime">Appointment Date and Time:</label><br>
+                    <input type="datetime-local" id="appointmentDateTime" name="appointmentDateTime" required><br><br>
+
+                    <label for="appointmentType">Appointment Type:</label><br>
+                    <input type="text" id="appointmentType" name="appointmentType"><br><br>
+
+                    <label for="notes">Notes:</label><br>
+                    <textarea id="notes" name="notes" rows="4" cols="50"></textarea><br><br>
+
+                    <input type="submit" name="create" value="Schedule Appointment">
+                </form>
+                <?php
+                if ($_SERVER["REQUEST_METHOD"] == "GET")
+                {
+                    $connection = new mysqli(DBHOST, DBUSER, DBPASS, DBNAME);
+                    if ( mysqli_connect_errno() )
+                                    {
+                                        die( mysqli_connect_error() );
+                                    }
+                    if (isset($_GET['create'])) {
+                        $patientId = $_GET['patientID'];
+                        $providerId = $_GET['providerID'];
+                        $appointmentDateTime = $_GET['appointmentDateTime'];
+                        $appointmentType = $_GET['appointmentType'];
+                        $notes = $_GET['notes'];
+                        $sql = "INSERT INTO Appointments (patientID, providerID, appointmentDateTime, appointmentType, notes)
+                                VALUES ('$patientId', '$providerId', '$appointmentDateTime', '$appointmentType', '$notes')";
+                        echo '<script>alert('.$sql.')</script>';
+                        if ($result = mysqli_query($connection, $sql))
+                        {
+                            if(mysqli_affected_rows($connection) > 0) {
+                                echo "<div> Success! </div>";
+                            } else {
+                                echo "<div> Failure! </div>";
+                            }
+                        }
+                    }
+                }
+            ?>
             </div>
         </div>
     </div>
