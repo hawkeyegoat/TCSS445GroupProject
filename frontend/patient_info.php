@@ -1,4 +1,6 @@
-<?php require_once('config.php'); ?>
+<?php require_once('config.php');
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,9 +55,9 @@
             </div>
         </div>
     </nav>
-    <div class="container mt-5 container-custom">
+    <div class="container mt-5 container">
         <div class="row justify-content-center">
-            <div class="col-12 login-box">
+            <div class="col-sm-6 col-lg-5 login-box">
                 <p class="text-center">Patient Health Info</p>
                 <form method="GET" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                     <div class="mb-3">
@@ -67,19 +69,107 @@
                             if ($connection->connect_error) {
                                 die("Connection failed: " . $connection->connect_error);
                             }
-                            $sql = "SELECT DISTINCT p.PatientID, p.First_name, p.Last_name 
-                                    FROM patients p
-                                    JOIN MonitoringData m ON p.PatientID = m.PatientID";
-                            if ($result = $connection->query($sql)) {
-                                while ($row = $result->fetch_assoc()) {
-                                    echo '<option value="' . $row['PatientID'] . '">' . $row['First_name'] . ' ' . $row['Last_name'] . '</option>';
+                            if ($_SESSION["isAdmin"] == "true") {
+                                $sql = "SELECT DISTINCT p.PatientID, p.First_name, p.Last_name 
+                                        FROM patients p
+                                        JOIN MonitoringData m ON p.PatientID = m.PatientID";
+                                if ($result = $connection->query($sql)) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo '<option value="' . $row['PatientID'] . '">' . $row['First_name'] . ' ' . $row['Last_name'] . '</option>';
+                                    }
+                                    $result->free();
                                 }
-                                $result->free();
+                            } else {
+                                $pID = $_SESSION['patientID'];
+                                $sql = "SELECT DISTINCT p.PatientID, p.First_name, p.Last_name 
+                                        FROM patients p
+                                        JOIN MonitoringData m ON p.PatientID = m.PatientID
+                                        WHERE p.PatientID = '$pID'";
+                                if ($result = $connection->query($sql)) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo '<option value="' . $row['PatientID'] . '">' . $row['First_name'] . ' ' . $row['Last_name'] . '</option>';
+                                    }
+                                    $result->free();
+                                }
                             }
                             ?>
                         </select>
                     </div>
                 </form>
+            </div>
+            <div class="col-sm-6 col-lg-5 login-box" id="createDataBox">
+                <p class="text-center">Add health record</p>
+                <form method="GET" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                    <label for="patientID">Patient ID:</label><br>
+                    <?php
+                        $pID = $_SESSION["patientID"];
+                        if ($_SESSION["isAdmin"] == "false") {
+                            echo '<input type="text" id="patientID" name="patientID" value="' . $pID . '" required readonly><br><br>';
+                        } else {
+                            echo '<input type="text" id="patientID" name="patientID" required><br><br>';
+                        }
+                    ?>
+
+                    <label for="recordDateTime">Record Date and Time:</label><br>
+                    <input type="datetime-local" id="recordDateTime" name="recordDateTime" required><br><br>
+
+                    <label for="heartRate">Heart Rate:</label><br>
+                    <input type="text" id="heartRate" name="heartRate"><br><br>
+
+                    <label for="bloodPressure">Blood Pressure:</label><br>
+                    <input type="text" id="bloodPressure" name="bloodPressure"><br><br>
+
+                    <label for="temperature">Temperature:</label><br>
+                    <input type="text" id="temperature" name="temperature"><br><br>
+
+                    <label for="oxygenSaturation">Oxygen Saturation:</label><br>
+                    <input type="text" id="oxygenSaturation" name="oxygenSaturation"><br><br>
+
+                    <label for="bloodSugar">Blood Sugar:</label><br>
+                    <input type="text" id="bloodSugar" name="bloodSugar"><br><br>
+
+                    <label for="weight">Weight:</label><br>
+                    <input type="text" id="weight" name="weight"><br><br>
+
+                    <label for="arrythmiaEvent">Arrythmia Event:</label><br>
+                    <input type="text" id="arrythmiaEvent" name="arrythmiaEvent"><br><br>
+
+                    <input type="submit" name="create" value="Submit Health Record">
+                </form>
+                <?php
+                if ($_SERVER["REQUEST_METHOD"] == "GET")
+                {
+                    $connection = new mysqli(DBHOST, DBUSER, DBPASS, DBNAME);
+                    if ( mysqli_connect_errno() )
+                                    {
+                                        die( mysqli_connect_error() );
+                                    }
+                    if (isset($_GET['create'])) {
+                        $patientId = $_GET['patientID'];
+                        $recordDateTime = $_GET['recordDateTime'];
+                        $heartRate = $_GET['heartRate'];
+                        $bloodPressure = $_GET['bloodPressure'];
+                        $temperature = $_GET['temperature'];
+                        $oxygenSaturation = $_GET['oxygenSaturation'];
+                        $bloodSugar = $_GET['bloodSugar'];
+                        $weight = $_GET['weight'];
+                        $arrythmiaEvent = $_GET['arrythmiaEvent'];
+                        if (strcasecmp($arrythmiaEvent, "T") != 0 && strcasecmp($arrythmiaEvent, "F") != 0 ) {
+                            echo "<div> Arrythmia Event must be 'T' or 'F'! </div>";
+                            exit();
+                        }
+                        $sql = "INSERT INTO MonitoringData (patientID, recordDateTime, heartRate, bloodPressure, temperature, oxygenSaturation, bloodSugar, weight, arrythmiaEvent)
+                                VALUES ('$patientId', '$recordDateTime', '$heartRate', '$bloodPressure', '$temperature', '$oxygenSaturation', '$bloodSugar', '$weight', '$arrythmiaEvent')";
+                        try {
+                            $result = mysqli_query($connection, $sql);
+                        } catch (Exception $e) {
+                            echo "<div> Query Failure! </div>";
+                        }
+                    }
+                }
+                ?>
+            </div>
+            <div class="col-sm-10 col-lg-10 login-box" id="createAppointmentsBox">
                 <div id="healthInfoResult" class="mt-3">
                     <?php
                     if (isset($_GET['patientId'])) {
@@ -128,7 +218,7 @@
                                 }
                                 echo "</tbody>
                                     </table>
-                                  </div>";
+                                </div>";
                             } else {
                                 echo '<p class="text-center">No health information found.</p>';
                             }

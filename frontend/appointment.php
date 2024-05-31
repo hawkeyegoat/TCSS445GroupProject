@@ -67,12 +67,24 @@
                             if ($connection->connect_error) {
                                 die("Connection failed: " . $connection->connect_error);
                             }
-                            $sql = "SELECT PatientID, First_name, Last_name FROM patients";
-                            if ($result = $connection->query($sql)) {
-                                while ($row = $result->fetch_assoc()) {
-                                    echo '<option value="' . $row['PatientID'] . '">' . $row['First_name'] . ' ' . $row['Last_name'] . '</option>';
+                            if ($_SESSION["isAdmin"] == "true") {
+                                $sql = "SELECT PatientID, First_name, Last_name FROM patients";
+                                if ($result = $connection->query($sql)) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo '<option value="' . $row['PatientID'] . '">' . $row['First_name'] . ' ' . $row['Last_name'] . '</option>';
+                                    }
+                                    $result->free();
                                 }
-                                $result->free();
+                            } else {
+                                $pID = $_SESSION['patientID'];
+                                $sql = "SELECT PatientID, First_name, Last_name FROM patients 
+                                        WHERE = '$pID'";
+                                if ($result = $connection->query($sql)) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo '<option value="' . $row['PatientID'] . '">' . $row['First_name'] . ' ' . $row['Last_name'] . '</option>';
+                                    }
+                                    $result->free();
+                                }
                             }
                             ?>
                         </select>

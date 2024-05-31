@@ -1,4 +1,9 @@
-<?php require_once('config.php'); ?>
+<?php require_once('config.php');
+    session_start();
+    if ($_SESSION["isAdmin"] == "false") {
+        header('Location: noAccess.html');
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -171,7 +176,6 @@
                         $notes = $_GET['notes'];
                         $sql = "INSERT INTO Appointments (patientID, providerID, appointmentDateTime, appointmentType, notes)
                                 VALUES ('$patientId', '$providerId', '$appointmentDateTime', '$appointmentType', '$notes')";
-                        echo '<script>alert('.$sql.')</script>';
                         try {
                             $result = mysqli_query($connection, $sql);
                         } catch (Exception $e) {
@@ -179,7 +183,7 @@
                         }
                     }
                 }
-            ?>
+                ?>
             </div>
         </div>
     </div>
