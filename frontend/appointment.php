@@ -80,7 +80,7 @@
                             } else {
                                 $pID = $_SESSION['patientID'];
                                 $sql = "SELECT PatientID, First_name, Last_name FROM patients 
-                                        WHERE = '$pID'";
+                                        WHERE PatientID = '$pID'";
                                 if ($result = $connection->query($sql)) {
                                     while ($row = $result->fetch_assoc()) {
                                         echo '<option value="' . $row['PatientID'] . '">' . $row['First_name'] . ' ' . $row['Last_name'] . '</option>';
