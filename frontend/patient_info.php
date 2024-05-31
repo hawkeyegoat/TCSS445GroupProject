@@ -1,4 +1,6 @@
-<?php require_once('config.php'); ?>
+<?php require_once('config.php');
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,14 +69,28 @@
                             if ($connection->connect_error) {
                                 die("Connection failed: " . $connection->connect_error);
                             }
-                            $sql = "SELECT DISTINCT p.PatientID, p.First_name, p.Last_name 
-                                    FROM patients p
-                                    JOIN MonitoringData m ON p.PatientID = m.PatientID";
-                            if ($result = $connection->query($sql)) {
-                                while ($row = $result->fetch_assoc()) {
-                                    echo '<option value="' . $row['PatientID'] . '">' . $row['First_name'] . ' ' . $row['Last_name'] . '</option>';
+                            if ($_SESSION["isAdmin"] == "true") {
+                                $sql = "SELECT DISTINCT p.PatientID, p.First_name, p.Last_name 
+                                        FROM patients p
+                                        JOIN MonitoringData m ON p.PatientID = m.PatientID";
+                                if ($result = $connection->query($sql)) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo '<option value="' . $row['PatientID'] . '">' . $row['First_name'] . ' ' . $row['Last_name'] . '</option>';
+                                    }
+                                    $result->free();
                                 }
-                                $result->free();
+                            } else {
+                                $pID = $_SESSION['patientID'];
+                                $sql = "SELECT DISTINCT p.PatientID, p.First_name, p.Last_name 
+                                        FROM patients p
+                                        JOIN MonitoringData m ON p.PatientID = m.PatientID
+                                        WHERE p.PatientID = '$pID'";
+                                if ($result = $connection->query($sql)) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo '<option value="' . $row['PatientID'] . '">' . $row['First_name'] . ' ' . $row['Last_name'] . '</option>';
+                                    }
+                                    $result->free();
+                                }
                             }
                             ?>
                         </select>
@@ -85,7 +101,14 @@
                 <p class="text-center">Add health record</p>
                 <form method="GET" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                     <label for="patientID">Patient ID:</label><br>
-                    <input type="text" id="patientID" name="patientID" required><br><br>
+                    <?php
+                        $pID = $_SESSION["patientID"];
+                        if ($_SESSION["isAdmin"] == "false") {
+                            echo '<input type="text" id="patientID" name="patientID" value="' . $pID . '" required readonly><br><br>';
+                        } else {
+                            echo '<input type="text" id="patientID" name="patientID" required><br><br>';
+                        }
+                    ?>
 
                     <label for="recordDateTime">Record Date and Time:</label><br>
                     <input type="datetime-local" id="recordDateTime" name="recordDateTime" required><br><br>

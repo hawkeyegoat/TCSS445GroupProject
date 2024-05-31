@@ -1,4 +1,9 @@
-<?php require_once('config.php'); ?>
+<?php require_once('config.php');
+    session_start();
+    if ($_SESSION["isAdmin"] == "false") {
+        header('Location: noAccess.html');
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
